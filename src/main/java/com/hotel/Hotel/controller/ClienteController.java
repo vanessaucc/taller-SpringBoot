@@ -1,7 +1,9 @@
 package com.hotel.Hotel.controller;
 
+import com.hotel.Hotel.dto.request.ActualizarClienteRequest;
 import com.hotel.Hotel.dto.request.CrearClienteRequest;
 import com.hotel.Hotel.dto.response.ClienteResponse;
+import com.hotel.Hotel.dto.response.ClienteResumenResponse;
 import com.hotel.Hotel.service.ClienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +39,19 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponse> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(clienteService.obtenerPorId(id));
+    }
+
+    // --- AGREGADO PARA TAREA 2: Resumen Ejecutivo del Cliente ---
+    @GetMapping("/{id}/resumen")
+    public ResponseEntity<ClienteResumenResponse> obtenerResumen(@PathVariable UUID id) {
+        return ResponseEntity.ok(clienteService.obtenerResumen(id));
+    }
+
+    // --- AGREGADO PARA TAREA 3: Actualización Parcial Segura (PATCH) ---
+    @PatchMapping("/{id}")
+    public ResponseEntity<ClienteResponse> actualizarParcial(
+            @PathVariable UUID id,
+            @RequestBody ActualizarClienteRequest request) {
+        return ResponseEntity.ok(clienteService.actualizarParcial(id, request));
     }
 }

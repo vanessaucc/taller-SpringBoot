@@ -1,0 +1,105 @@
+### ====================================================================
+### TALLER PRÁCTICO: API DEL HOTEL
+### Estudiante: Vanessa Mena
+### Archivo de pruebas HTTP avanzado para REST Client / IntelliJ HTTP Client
+### ====================================================================
+
+@baseUrl = http://localhost:8080/api
+
+### --------------------------------------------------------------------
+### PASO PREVIO 1: Crear un Cliente Inicial
+### --------------------------------------------------------------------
+# @name crearCliente
+POST {{baseUrl}}/clientes
+Content-Type: application/json
+
+{
+  "nombre": "Vanessa Mena",
+  "email": "vanessa.mena@hotel.com"
+}
+
+### Guardamos el ID del cliente generado para las pruebas posteriores
+@clienteId = {{crearCliente.response.body.id}}
+
+
+### --------------------------------------------------------------------
+### PASO PREVIO 2: Crear Habitación Estándar
+### --------------------------------------------------------------------
+# @name crearEstandar
+POST {{baseUrl}}/habitaciones/estandares
+Content-Type: application/json
+
+{
+  "numero": "E01-101",
+  "precioPorNoche": 120.0,
+  "capacidadMaxima": 3,
+  "camasIndividuales": 2
+}
+
+@habitacionEstandarId = {{crearEstandar.response.body.id}}
+
+
+### ====================================================================
+### PRUEBA 1: Creación de Suite Presidencial (Herencia Polimórfica)
+### ====================================================================
+# @name crearSuite
+POST {{baseUrl}}/habitaciones/suites
+Content-Type: application/json
+
+{
+  "numero": "P05-501",
+  "precioPorNoche": 350.0,
+  "capacidadMaxima": 2,
+  "jacuzziPrivado": true,
+  "incluyeMayordomo": true
+}
+
+@suiteId = {{crearSuite.response.body.id}}
+
+
+### ====================================================================
+### PRUEBA 2: Consulta Polimórfica (Conviven Estándar y Suite con "tipo")
+### ====================================================================
+GET {{baseUrl}}/habitaciones
+Accept: application/json
+
+
+### --------------------------------------------------------------------
+### PASO PREVIO 3: Crear Reservas para generar historial del Cliente
+### --------------------------------------------------------------------
+# @name crearReserva1
+POST {{baseUrl}}/reservas
+Content-Type: application/json
+
+{
+  "clienteId": "{{clienteId}}",
+  "habitacionId": "{{suiteId}}",
+  "fechaInicio": "2026-10-10T14:00:00",
+  "fechaFin": "2026-10-15T10:00:00"
+}
+
+
+### ====================================================================
+### PRUEBA 3: Resumen Ejecutivo del Cliente (Proyecciones Anidadas y Totales Calculados)
+### ====================================================================
+GET {{baseUrl}}/clientes/{{clienteId}}/resumen
+Accept: application/json
+
+
+### ====================================================================
+### PRUEBA 4: Actualización Selectiva Segura (HTTP PATCH)
+### Modifica únicamente el nombre sin afectar email, penalizaciones ni reservas
+### ====================================================================
+PATCH {{baseUrl}}/clientes/{{clienteId}}
+Content-Type: application/json
+
+{
+  "nombre": "Vanessa Mena (Actualizada)"
+}
+
+
+### --------------------------------------------------------------------
+### PASO DE COMPROBACIÓN: Verificar que los invariantes del cliente se mantuvieron
+### --------------------------------------------------------------------
+GET {{baseUrl}}/clientes/{{clienteId}}
+Accept: application/json

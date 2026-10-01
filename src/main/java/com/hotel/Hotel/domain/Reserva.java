@@ -39,6 +39,8 @@ public class Reserva {
             throw new IllegalArgumentException("Habitación obligatoria");
         if (periodo == null)
             throw new IllegalArgumentException("Periodo obligatorio");
+        if (!cliente.puedeRealizarReservas())
+            throw new IllegalStateException("El cliente no está activo para realizar reservas");
 
         this.id = UUID.randomUUID();
         this.cliente = cliente;
@@ -46,6 +48,7 @@ public class Reserva {
         this.periodo = periodo;
         this.estado = EstadoReserva.PENDIENTE;
         this.costoTotal = habitacion.getPrecioPorNoche() * Math.max(1, periodo.getDias());
+        this.cliente.agregarReserva(this);
     }
 
     public void confirmar() {

@@ -62,6 +62,14 @@ public class Cliente {
         return this.activo;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -80,6 +88,12 @@ public class Cliente {
 
     public int getPenalizaciones() {
         return penalizaciones;
+    }
+
+    public void agregarReserva(Reserva reserva) {
+        if (reserva != null && !this.reservas.contains(reserva)) {
+            this.reservas.add(reserva);
+        }
     }
 
     public List<Reserva> getReservas() {
